@@ -27,6 +27,7 @@ function initGit(){
         git init
     else
         printf "${arrow}  Abort...\n"
+        exit 1
     fi
     return 0
 }
@@ -47,4 +48,31 @@ function serveMenu(){
     echo
 }
 
-checkInit
+function parseFlag(){
+    checkInit
+    if [ $# -gt 0 ]; then
+        for arg in $@; do
+            case $arg in
+                'add-a')
+                    # add modified files only
+                    printf "${arrow}  Running 'git add -u'\n"
+                    git add -u
+                    ;;
+                'add-u')
+                    # add all untracked files
+                    printf "${arrow}  Running "
+                    echo -n 'echo -e "\na\n*\nq" | git add i'
+                    echo
+                    echo -e "\na\n*\nq" | git add -i
+                    ;;
+            esac
+        done
+    else
+        printf "${arrow}  No arguments passed... Exiting\n"
+        exit 1
+    fi
+    exit $?
+}
+
+
+parseFlag $@
